@@ -1,0 +1,22 @@
+# Local/runtime files
+.env
+.venv/
+__pycache__/
+*.pyc
+
+# Blender private assets and generated outputs
+*.blend
+*.blend1
+*.blend2
+*.exr
+*.hdr
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+*.zip
+outputs/
+scratch/
+reports/
+examples/blender_bridge/reports/
