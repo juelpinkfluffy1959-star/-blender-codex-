@@ -1,22 +1,112 @@
-# Local/runtime files
-.env
-.venv/
-__pycache__/
-*.pyc
+# 依赖目录
+node_modules/
+dist/
 
-# Blender private assets and generated outputs
-*.blend
-*.blend1
-*.blend2
-*.exr
-*.hdr
-*.png
-*.jpg
-*.jpeg
-*.tif
-*.tiff
-*.zip
+# Python 缓存
+__pycache__/
+*.py[cod]
+
+# 本地环境和密钥
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+
+# 生成物、缓存和本地渲染输出
+output/
 outputs/
-scratch/
 reports/
-examples/blender_bridge/reports/
+!examples/cad/output/
+!examples/cad/output/.gitkeep
+**/outputs/
+**/reports/
+scratch/
+research_repos/
+third_party_research/
+external_references/
+docx_render_check/
+.codex_video_deps/
+.codex_video_frames/
+.skill-build/
+examples/output/**/*.png
+examples/output/**/*.jpg
+examples/output/**/*.jpeg
+examples/output/**/*.webp
+examples/output/**/*.psd
+examples/output/**/*.ai
+examples/output/**/*.svg
+examples/output/**/*.pdf
+examples/output/**/*.json
+!examples/output/
+!examples/output/.gitkeep
+!examples/output/README.md
+
+# 不属于 GitHub 发布范围的本地 demo、报告脚本和研究素材
+src/
+virtual-pet/
+overtime-analysis-deck/
+/index.html
+/bing_test.html
+/main.py
+/vite.config.js
+/package-lock.json
+/_local_demo/
+/examples/example_plan.json
+/examples/example_prompt.txt
+_codex_reference_contact_sheet.jpg
+codex_doll_four_modes.png
+build_aigc_research_report.py
+enhance_ai_reports.py
+mao-volume5-refined-style.md
+reference_style_notes.md
+scripts/append_art_capability_explainers.py
+scripts/append_art_tech_300_projects.py
+scripts/create_ai_art_workflow_doc.py
+scripts/create_art_plugin_recommendations_doc.py
+scripts/enhance_github_report_cn.py
+scripts/expand_ai_art_workflow_doc.py
+scripts/generate_github_hot_report.py
+
+# 旧版根目录 CAD 实验文件保留在本机，不进入公开仓库
+/autocad_bridge.py
+/cad_schema.py
+/dxf_writer.py
+/image_trace_to_cad_json.py
+/requirements.txt
+
+# 日志和临时文件
+*.log
+*.err
+*.tmp
+*.bak
+.pytest_cache/
+
+# 大型模型、工程源文件和真实输出
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.psd
+*.dwg
+*.dxf
+*.ai
+*.ait
+*.aep
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.webm
+*.prproj
+*.aepx
+draft_content.json
+draft_info.json
+*.srt.bak
+!*.example.json
+
+# 系统和编辑器噪音
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
