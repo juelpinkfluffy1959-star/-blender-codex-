@@ -5,13 +5,12 @@ import json
 import os
 import platform
 import re
-import shutil
 import sys
 from pathlib import Path
 from typing import Any
 
 
-BRIDGE_ID = "blender"
+BRIDGE_ID = "capcut_jianying"
 
 
 def redact(value: str | None) -> str | None:
@@ -23,29 +22,49 @@ def redact(value: str | None) -> str | None:
     return re.sub(r"C:\\Users\\[^\\]+", r"<USER_HOME>", value, flags=re.IGNORECASE)
 
 
+def env_path_state(name: str) -> tuple[bool, bool]:
+    value = os.environ.get(name)
+    return bool(value), bool(value and Path(value).exists())
+
+
 def probe() -> dict[str, Any]:
-    env_value = os.environ.get("STARBRIDGE_BLENDER_EXE") or os.environ.get("BLENDER_EXE")
-    env_exists = bool(env_value and Path(env_value).exists())
-    blender_on_path = shutil.which("blender") is not None or shutil.which("blender.exe") is not None
+    jianying_exe_configured, jianying_exe_exists = env_path_state("JIANYING_EXE")
+    capcut_exe_configured, capcut_exe_exists = env_path_state("CAPCUT_EXE")
+    jianying_drafts_configured, jianying_drafts_exists = env_path_state("JIANYING_DRAFTS_DIR")
+    capcut_drafts_configured, capcut_drafts_exists = env_path_state("CAPCUT_DRAFTS_DIR")
+
+    has_exe = jianying_exe_exists or capcut_exe_exists
+    has_draft_dir = jianying_drafts_exists or capcut_drafts_exists
     report: dict[str, Any] = {
         "bridge_id": BRIDGE_ID,
-        "ok": env_exists or blender_on_path,
+        "ok": has_exe and has_draft_dir,
         "detected": {
             "platform": platform.system() or platform.platform(),
-            "blender_env_configured": bool(env_value),
-            "blender_env_exists": env_exists,
-            "blender_on_path": blender_on_path,
+            "jianying_exe_configured": jianying_exe_configured,
+            "jianying_exe_exists": jianying_exe_exists,
+            "capcut_exe_configured": capcut_exe_configured,
+            "capcut_exe_exists": capcut_exe_exists,
+            "jianying_drafts_dir_configured": jianying_drafts_configured,
+            "jianying_drafts_dir_exists": jianying_drafts_exists,
+            "capcut_drafts_dir_configured": capcut_drafts_configured,
+            "capcut_drafts_dir_exists": capcut_drafts_exists,
         },
         "errors": [],
-        "warnings": [],
+        "warnings": [
+            {
+                "code": "research_only",
+                "message": "This bridge is research-only and does not automate the desktop app.",
+            }
+        ],
         "safe_to_commit": True,
     }
-    if env_value and not env_exists:
-        report["warnings"].append(
-            {"code": "blender_env_missing", "message": "Configured Blender executable does not exist."}
-        )
     if not report["ok"]:
-        report["errors"].append({"code": "blender_not_detected", "message": "Blender executable was not detected."})
+        report["errors"].append(
+            {
+                "code": "draft_bridge_not_configured",
+                "message": "No Jianying or CapCut executable and draft directory are configured.",
+            }
+        )
     return report
 
 
@@ -55,7 +74,7 @@ def write_report(report: dict[str, Any], report_path: Path) -> None:
 
 
 def print_text(report: dict[str, Any]) -> None:
-    print("Blender 三维场景桥 probe")
+    print("剪映 / CapCut 草稿桥 probe")
     print("=" * 24)
     print("bridge_id:", report["bridge_id"])
     print("ok:", report["ok"])
@@ -68,11 +87,11 @@ def print_text(report: dict[str, Any]) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="只读检测本机 Blender bridge，输出安全 JSON report。")
+    parser = argparse.ArgumentParser(description="只读检测剪映 / CapCut 草稿桥配置，输出安全 JSON report。")
     parser.add_argument("--json", action="store_true", help="只向 stdout 输出 JSON。")
     parser.add_argument(
         "--report-path",
-        default=str(Path(__file__).resolve().parent / "reports" / "blender_probe_report.json"),
+        default=str(Path(__file__).resolve().parent / "reports" / "capcut_jianying_probe_report.json"),
     )
     args = parser.parse_args()
     report = probe()
